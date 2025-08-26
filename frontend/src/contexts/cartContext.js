@@ -3,9 +3,9 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 
 const CartContext = createContext();
 
-export const CartProvider = ({children}) => {
+export const CartProvider = ({ children }) => {
 
-    const [cart , setCart] = useState(
+    const [cart, setCart] = useState(
         () => {
             const storedCart = localStorage.getItem("cart");
             return storedCart ? JSON.parse(storedCart) : [];
@@ -13,21 +13,21 @@ export const CartProvider = ({children}) => {
     )
 
     useEffect(() => {
-        localStorage.setItem("cart" , JSON.stringify(cart))
-    } , [cart])
+        localStorage.setItem("cart", JSON.stringify(cart))
+    }, [cart])
 
     // add item to cart
     const addItem = (item) => {
         setCart((prev) => {
-        const existing = prev.find((i) => i.id === item.id);
-        if (existing) {
-            // If item exists, increase quantity
-            return prev.map((i) =>
-            i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
-            );
-        } else {
-            return [...prev, { ...item, quantity: 1 }];
-        }
+            const existing = prev.find((i) => i.id === item.id);
+            if (existing) {
+                // If item exists, increase quantity
+                return prev.map((i) =>
+                    i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i
+                );
+            } else {
+                return [...prev, { ...item, quantity: 1 }];
+            }
         });
     };
 
@@ -39,7 +39,7 @@ export const CartProvider = ({children}) => {
     // Update quantity of an item
     const updateQuantity = (id, quantity) => {
         setCart((prev) =>
-        prev.map((i) => (i.id === id ? { ...i, quantity } : i))
+            prev.map((i) => (i.id === id ? { ...i, quantity } : i))
         );
     };
 
@@ -53,4 +53,4 @@ export const CartProvider = ({children}) => {
     );
 };
 
-export const useCart = () => useContext(CartContext);
+export const useCart = () => useContext(CartContext); // turning this into a hook
