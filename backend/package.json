@@ -5,7 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "dev:no-seed": "nodemon server.js",
+    "seed": "node seeders/index.js",
+    "seed:categories": "node seeders/categorySeeder.js",
+    "seed:products": "node seeders/productSeeder.js"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +21,7 @@
     "express": "^5.1.0",
     "framer-motion": "^12.23.12",
     "mongoose": "^8.18.0",
+    "nodemailer": "^7.0.6",
     "nodemon": "^3.1.10"
   }
 }

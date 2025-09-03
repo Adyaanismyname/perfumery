@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useFeaturedProducts } from "../hooks/productHooks";
 
 const UserHome = () => {
     const [currentSlide, setCurrentSlide] = useState(0);
     const [isLoaded, setIsLoaded] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const { data, isLoading, isError } = useFeaturedProducts();
 
+    const featuredProducts = data;
     // set slideshow
     useEffect(() => {
         setIsLoaded(true);
@@ -30,12 +33,6 @@ const UserHome = () => {
     ];
 
     // change later once backend established
-    const featuredProducts = [
-        { id: 1, name: "Golden Aura", price: "$120", image: "https://images.unsplash.com/photo-1595425970945-1563269b3d26?w=300&h=400&fit=crop" },
-        { id: 2, name: "Midnight Bloom", price: "$98", image: "https://images.unsplash.com/photo-1592945403244-b3fbafd7f539?w=300&h=400&fit=crop" },
-        { id: 3, name: "Citrus Dreams", price: "$85", image: "https://images.unsplash.com/photo-1594035910387-fea47794261f?w=300&h=400&fit=crop" },
-        { id: 4, name: "Royal Essence", price: "$150", image: "https://images.unsplash.com/photo-1588405748880-12d1d2a59db9?w=300&h=400&fit=crop" }
-    ];
 
     const containerVariants = {
         hidden: { opacity: 0 },
@@ -301,48 +298,72 @@ const UserHome = () => {
                         viewport={{ once: true }}
                         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8"
                     >
-                        {featuredProducts.map((product, index) => (
-                            <motion.div
-                                key={product.id}
-                                variants={itemVariants}
-                                whileHover={{ y: -10, scale: 1.02 }}
-                                className="bg-white rounded-2xl shadow-lg overflow-hidden group cursor-pointer"
-                            >
-                                <div className="relative overflow-hidden">
-                                    <img
-                                        src={product.image}
-                                        alt={product.name}
-                                        className="w-full h-48 sm:h-56 md:h-64 object-cover group-hover:scale-110 transition-transform duration-500"
-                                    />
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                                    <motion.button
-                                        initial={{ scale: 0 }}
-                                        whileInView={{ scale: 1 }}
-                                        whileHover={{ scale: 1.1 }}
-                                        transition={{ delay: index * 0.1 }}
-                                        className="absolute top-4 right-4 bg-white/90 p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                                    >
-                                        <svg className="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                                        </svg>
-                                    </motion.button>
-                                </div>
-
-                                <div className="p-4 md:p-6">
-                                    <h3 className="text-lg md:text-xl font-semibold mb-2 text-gray-800">{product.name}</h3>
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-xl md:text-2xl font-bold text-amber-600">{product.price}</span>
-                                        <motion.button
-                                            whileHover={{ scale: 1.05 }}
-                                            whileTap={{ scale: 0.95 }}
-                                            className="bg-gradient-to-r from-amber-500 to-yellow-500 text-white px-3 md:px-4 py-2 rounded-full text-xs md:text-sm font-medium shadow-lg hover:shadow-xl transition-all"
-                                        >
-                                            Add to Cart
-                                        </motion.button>
+                        {isLoading ? (
+                            // Loading skeleton
+                            Array.from({ length: 8 }).map((_, index) => (
+                                <div key={index} className="bg-white rounded-2xl shadow-lg overflow-hidden animate-pulse">
+                                    <div className="w-full h-48 sm:h-56 md:h-64 bg-gray-200"></div>
+                                    <div className="p-4 md:p-6">
+                                        <div className="h-6 bg-gray-200 rounded mb-2"></div>
+                                        <div className="flex justify-between items-center">
+                                            <div className="h-8 bg-gray-200 rounded w-20"></div>
+                                            <div className="h-8 bg-gray-200 rounded w-24"></div>
+                                        </div>
                                     </div>
                                 </div>
-                            </motion.div>
-                        ))}
+                            ))
+                        ) : isError ? (
+                            <div className="col-span-full text-center py-12">
+                                <p className="text-red-500 text-lg">Error loading products. Please try again later.</p>
+                            </div>
+                        ) : featuredProducts && featuredProducts.length > 0 ? (
+                            featuredProducts.map((product, index) => (
+                                <motion.div
+                                    key={product._id || product.id || index}
+                                    variants={itemVariants}
+                                    whileHover={{ y: -10, scale: 1.02 }}
+                                    className="bg-white rounded-2xl shadow-lg overflow-hidden group cursor-pointer"
+                                >
+                                    <div className="relative overflow-hidden">
+                                        <img
+                                            src={product.picture}
+                                            alt={product.title}
+                                            className="w-full h-48 sm:h-56 md:h-64 object-cover group-hover:scale-110 transition-transform duration-500"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                        <motion.button
+                                            initial={{ scale: 0 }}
+                                            whileInView={{ scale: 1 }}
+                                            whileHover={{ scale: 1.1 }}
+                                            transition={{ delay: index * 0.1 }}
+                                            className="absolute top-4 right-4 bg-white/90 p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                                        >
+                                            <svg className="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                            </svg>
+                                        </motion.button>
+                                    </div>
+
+                                    <div className="p-4 md:p-6">
+                                        <h3 className="text-lg md:text-xl font-semibold mb-2 text-gray-800">{product.title}</h3>
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-xl md:text-2xl font-bold text-amber-600">${product.price}</span>
+                                            <motion.button
+                                                whileHover={{ scale: 1.05 }}
+                                                whileTap={{ scale: 0.95 }}
+                                                className="bg-gradient-to-r from-amber-500 to-yellow-500 text-white px-3 md:px-4 py-2 rounded-full text-xs md:text-sm font-medium shadow-lg hover:shadow-xl transition-all"
+                                            >
+                                                Add to Cart
+                                            </motion.button>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            ))
+                        ) : (
+                            <div className="col-span-full text-center py-12">
+                                <p className="text-gray-500 text-lg">No products available.</p>
+                            </div>
+                        )}
                     </motion.div>
                 </div>
             </section>

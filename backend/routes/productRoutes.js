@@ -1,10 +1,11 @@
 const express = require("express");
 const Router = express.Router();
-const { getAllProducts } = require("../controllers/productController");
+const { getAllProducts, getFeaturedProducts } = require("../controllers/productController");
 
 
 Router.get("/get-all-products", getAllProducts);
+Router.get("/get-featured-products", getFeaturedProducts);
 
 
 
-export default Router;
+module.exports = Router;
