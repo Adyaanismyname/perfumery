@@ -16,21 +16,12 @@ app.use(express.json());
 //server port
 const PORT = process.env.PORT || 3000;
 
-// Health check route
-app.get('/api/health', (req, res) => {
-  res.json({ 
-    message: 'Server is running!', 
-    timestamp: new Date().toISOString(),
-    database: 'Connected to MongoDB'
-  });
-});
-
 // Routes
 app.use('/api/admin', require('./routes/adminRoutes'));
 
 // 404 handler
 app.use((req, res, next) => {
-    res.status(404).json({ message: "Route Not Found" });
+  res.status(404).json({ message: "Route Not Found" });
 });
 
 // Error handling middleware
