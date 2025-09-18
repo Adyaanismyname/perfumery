@@ -1,5 +1,6 @@
 const admin = require("../../models/admin");
-const nodemailer = require("nodemailer")
+const nodemailer = require("nodemailer");
+const jwt = require("jsonwebtoken");
 
 const LoginAdmin = async (req, res) => {
     const { email } = req.body;
@@ -56,6 +57,16 @@ const sendOTP = async (email) => {
     return otp;
 }
 
+const generateToken = async (admin) => {
+    const payload = {
+        id: admin._id,
+        email: admin.email,
+        role: 'admin'
+    };
+    return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
+}
+
+
 
 const verifyOTP = async (req, res) => {
     const { email, otp } = req.body;
@@ -64,21 +75,55 @@ const verifyOTP = async (req, res) => {
         return res.status(400).json({ data: null, message: "OTP is required" });
     }
 
-    const existingAdmin = await admin.findOne({ email: email });
-    if (!existingAdmin || existingAdmin.currentOTP !== otp || existingAdmin.otpExpiresAt < Date.now()) {
-        return res.status(400).json({ data: null, message: "Invalid or expired OTP" });
+    try {
+        const existingAdmin = await admin.findOne({ email: email });
+        if (!existingAdmin || existingAdmin.currentOTP !== otp || existingAdmin.otpExpiresAt < Date.now()) {
+            return res.status(400).json({ data: null, message: "Invalid or expired OTP" });
+        }
+
+        existingAdmin.currentOTP = null;
+        existingAdmin.otpExpiresAt = null;
+        await existingAdmin.save();
+
+        const token = await generateToken(existingAdmin);
+
+        res.cookie('jwt', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'Strict',
+            maxAge: 3600000 // 1 hour
+        });
+
+        return res.status(200).json({
+            data: { token },
+            message: "Login successful"
+        });
+
+    } catch (error) {
+        return res.status(500).json({ data: null, message: "Server error" });
     }
+}
 
-    existingAdmin.currentOTP = null;
-    existingAdmin.otpExpiresAt = null;
-    await existingAdmin.save();
+// Logout admin and clear cookie
+const LogoutAdmin = async (req, res) => {
+    try {
+        res.clearCookie('jwt', {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'Strict'
+        });
 
-    return res.status(200).json({ data: null, message: "OTP verified successfully" });
-
-
+        return res.status(200).json({
+            data: null,
+            message: "Logged out successfully"
+        });
+    } catch (error) {
+        return res.status(500).json({ data: null, message: "Server error" });
+    }
 }
 
 module.exports = {
     LoginAdmin,
-    verifyOTP
+    verifyOTP,
+    LogoutAdmin
 };

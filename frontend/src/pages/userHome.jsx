@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useFeaturedProducts } from "../hooks/productHooks";
+import Navbar from "../components/Navbar";
 
 const UserHome = () => {
     const [currentSlide, setCurrentSlide] = useState(0);
     const [isLoaded, setIsLoaded] = useState(false);
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const { data, isLoading, isError } = useFeaturedProducts();
 
     const featuredProducts = data;
@@ -64,126 +64,8 @@ const UserHome = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50">
-            {/* Navigation */}
-            <motion.nav
-                initial={{ y: -100 }}
-                animate={{ y: 0 }}
-                transition={{ duration: 0.8 }}
-                className="fixed top-0 w-full z-50 bg-black/95 backdrop-blur-md shadow-lg border-b border-amber-500/20"
-            >
-                <div className="container mx-auto px-6 py-4">
-                    <div className="flex items-center justify-between">
-                        {/* Logo */}
-                        <motion.div
-                            className="flex cursor-pointer items-center space-x-4"
-                            whileHover={{ scale: 1.05 }}
-                        >
-                            <img src="/logo.svg" alt="House of Oudh" className="h-12 w-12" />
-                            <span className="text-2xl font-bold bg-gradient-to-r from-amber-400 to-yellow-400 bg-clip-text text-transparent">
-                                House of Oudh
-                            </span>
-                        </motion.div>
-
-                        {/* Right Side - Navigation and Cart */}
-                        <motion.div
-                            className="flex items-center space-x-6"
-                        >
-                            {/* Desktop Navigation */}
-                            <div className="hidden md:flex space-x-9">
-                                {['Home', 'Collections', 'About', 'Contact'].map((item, index) => (
-                                    <motion.a
-                                        key={item}
-                                        href="#"
-                                        className="text-white hover:text-amber-400 font-medium transition-colors relative group"
-                                        whileHover={{ y: -2 }}
-                                        initial={{ opacity: 0, y: -20 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: index * 0.1 }}
-                                    >
-                                        {item}
-                                        <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-amber-400 to-yellow-400 transition-all duration-300 group-hover:w-full"></span>
-                                    </motion.a>
-                                ))}
-                            </div>
-
-                            {/* Cart Icon */}
-                            <motion.button
-                                whileHover={{ scale: 1.1 }}
-                                whileTap={{ scale: 0.95 }}
-                                className=" cursor-pointer relative p-3 text-white hover:text-amber-400 transition-colors"
-                            >
-                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m0 0h7M19 18a2 2 0 11-4 0 2 2 0 014 0z" />
-                                </svg>
-                                {/* Cart Count Badge */}
-                                <span className="absolute -top-1 -right-1 bg-gradient-to-r from-amber-500 to-yellow-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-semibold">
-                                    0
-                                </span>
-                            </motion.button>
-
-                            {/* Mobile Menu Button */}
-                            <motion.button
-                                whileHover={{ scale: 1.1 }}
-                                whileTap={{ scale: 0.95 }}
-                                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                                className="md:hidden p-2 text-white hover:text-amber-400 transition-colors"
-                            >
-                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    {isMobileMenuOpen ? (
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                    ) : (
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                                    )}
-                                </svg>
-                            </motion.button>
-                        </motion.div>
-                    </div>
-                </div>
-            </motion.nav>
-
-            {/* Mobile Menu */}
-            <AnimatePresence>
-                {isMobileMenuOpen && (
-                    <motion.div
-                        initial={{ x: "100%" }}
-                        animate={{ x: 0 }}
-                        exit={{ x: "100%" }}
-                        transition={{ duration: 0.3, ease: "easeInOut" }}
-                        className="fixed top-0 right-0 w-80 h-full bg-black/95 backdrop-blur-md z-50 md:hidden"
-                    >
-                        <div className="p-6 pt-20">
-                            <div className="flex flex-col space-y-6">
-                                {['Home', 'Collections', 'About', 'Contact'].map((item, index) => (
-                                    <motion.a
-                                        key={item}
-                                        href="#"
-                                        initial={{ opacity: 0, x: 50 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: index * 0.1 }}
-                                        onClick={() => setIsMobileMenuOpen(false)}
-                                        className="text-white hover:text-amber-400 font-medium text-xl transition-colors border-b border-gray-700 pb-4"
-                                    >
-                                        {item}
-                                    </motion.a>
-                                ))}
-                            </div>
-                        </div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-
-            {/* Mobile Menu Overlay */}
-            <AnimatePresence>
-                {isMobileMenuOpen && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        onClick={() => setIsMobileMenuOpen(false)}
-                        className="fixed inset-0 bg-black/50 z-40 md:hidden"
-                    />
-                )}
-            </AnimatePresence>            {/* Hero Section */}
+            <Navbar />
+            {/* Hero Section */}
             <section className="relative h-screen flex items-center justify-center overflow-hidden pt-16 md:pt-20">
                 <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-black/30 z-10"></div>
 
@@ -293,14 +175,14 @@ const UserHome = () => {
 
                     <motion.div
                         variants={containerVariants}
-                        initial="hidden"
-                        whileInView="visible"
+                        // initial="hidden"
+                        // whileInView="visible"
                         viewport={{ once: true }}
-                        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8"
+                        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
                     >
                         {isLoading ? (
                             // Loading skeleton
-                            Array.from({ length: 8 }).map((_, index) => (
+                            Array.from({ length: 6 }).map((_, index) => (
                                 <div key={index} className="bg-white rounded-2xl shadow-lg overflow-hidden animate-pulse">
                                     <div className="w-full h-48 sm:h-56 md:h-64 bg-gray-200"></div>
                                     <div className="p-4 md:p-6">
@@ -321,39 +203,81 @@ const UserHome = () => {
                                 <motion.div
                                     key={product._id || product.id || index}
                                     variants={itemVariants}
-                                    whileHover={{ y: -10, scale: 1.02 }}
-                                    className="bg-white rounded-2xl shadow-lg overflow-hidden group cursor-pointer"
+                                    whileHover={{ y: -8, scale: 1.01 }}
+                                    className="bg-white rounded-3xl shadow-xl overflow-hidden group cursor-pointer border border-gray-100 hover:shadow-2xl transition-all duration-500"
                                 >
                                     <div className="relative overflow-hidden">
                                         <img
                                             src={product.picture}
                                             alt={product.title}
-                                            className="w-full h-48 sm:h-56 md:h-64 object-cover group-hover:scale-110 transition-transform duration-500"
+                                            className="w-full h-48 sm:h-56 md:h-64 object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                                         />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                                        {/* Wishlist Button */}
                                         <motion.button
                                             initial={{ scale: 0 }}
                                             whileInView={{ scale: 1 }}
                                             whileHover={{ scale: 1.1 }}
                                             transition={{ delay: index * 0.1 }}
-                                            className="absolute top-4 right-4 bg-white/90 p-2 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                                            className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm p-2.5 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white"
                                         >
-                                            <svg className="w-5 h-5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <svg className="w-4 h-4 text-gray-600 hover:text-red-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                                             </svg>
                                         </motion.button>
+
+                                        {/* Quick View Button */}
+                                        <motion.div
+                                            initial={{ opacity: 0, y: 20 }}
+                                            whileInView={{ opacity: 0, y: 20 }}
+                                            className="absolute bottom-4 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300"
+                                        >
+                                            <button className="bg-white/95 backdrop-blur-sm text-gray-800 px-4 py-2 rounded-full text-sm font-medium shadow-lg hover:bg-white transition-all">
+                                                Quick View
+                                            </button>
+                                        </motion.div>
                                     </div>
 
-                                    <div className="p-4 md:p-6">
-                                        <h3 className="text-lg md:text-xl font-semibold mb-2 text-gray-800">{product.title}</h3>
+                                    <div className="p-5 md:p-6">
+                                        {/* Product Title */}
+                                        <div className="mb-3">
+                                            <p className="text-xs text-gray-500 uppercase tracking-wide font-medium mb-1">House of Oudh</p>
+                                            <h3 className="text-lg md:text-xl font-semibold text-gray-900 leading-tight">
+                                                {product.title}
+                                            </h3>
+                                        </div>
+
+                                        {/* Product Details */}
+                                        <div className="mb-4">
+                                            <div className="flex items-center gap-1 mb-2">
+                                                {/* Star Rating */}
+                                                {[...Array(5)].map((_, i) => (
+                                                    <svg
+                                                        key={i}
+                                                        className={`w-3.5 h-3.5 ${i < Math.floor(product.rating) ? 'text-amber-400' : 'text-gray-300'} fill-current`}
+                                                        viewBox="0 0 20 20"
+                                                    >
+                                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                                    </svg>
+                                                ))}
+                                                <span className="text-xs text-gray-500 ml-1">({product.rating})</span>
+                                            </div>
+                                            <p className="text-sm text-gray-600">50ml • Eau de Parfum</p>
+                                        </div>
+
+                                        {/* Price and Action */}
                                         <div className="flex items-center justify-between">
-                                            <span className="text-xl md:text-2xl font-bold text-amber-600">${product.price}</span>
+                                            <div className="flex flex-col">
+                                                <span className="text-lg font-bold text-gray-900">${product.price}</span>
+                                                <span className="text-xs text-gray-500">Free shipping</span>
+                                            </div>
                                             <motion.button
-                                                whileHover={{ scale: 1.05 }}
-                                                whileTap={{ scale: 0.95 }}
-                                                className="bg-gradient-to-r from-amber-500 to-yellow-500 text-white px-3 md:px-4 py-2 rounded-full text-xs md:text-sm font-medium shadow-lg hover:shadow-xl transition-all"
+                                                whileHover={{ scale: 1.02 }}
+                                                whileTap={{ scale: 0.98 }}
+                                                className="bg-amber-500 text-white px-4 md:px-5 py-2.5 rounded-xl text-sm font-medium shadow-lg hover:bg-gray-800 transition-all duration-300 hover:shadow-xl"
                                             >
-                                                Add to Cart
+                                                View
                                             </motion.button>
                                         </div>
                                     </div>
@@ -406,7 +330,7 @@ const UserHome = () => {
                         >
                             <motion.img
                                 animate={floatAnimation}
-                                src="https://images.unsplash.com/photo-1595425970945-1563269b3d26?w=600&h=700&fit=crop"
+                                src="https://images.unsplash.com/photo-1709662217618-83586dc9b777?q=80&w=1287&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                                 alt="Perfume crafting"
                                 className="w-full h-64 sm:h-80 md:h-96 lg:h-auto rounded-2xl shadow-2xl object-cover"
                             />
@@ -439,7 +363,7 @@ const UserHome = () => {
                             <input
                                 type="email"
                                 placeholder="Enter your email"
-                                className="flex-1 px-4 md:px-6 py-2.5 md:py-3 rounded-full border-none outline-none text-gray-700 text-sm md:text-base"
+                                className="flex-1 px-4 md:px-6 py-2.5 md:py-3  focus:bg-white focus:text-black rounded-full border-2 border-white outline-none text-white text-sm md:text-base"
                             />
                             <motion.button
                                 whileHover={{ scale: 1.05 }}

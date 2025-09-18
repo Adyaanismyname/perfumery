@@ -23,7 +23,10 @@ const initializeDatabase = async () => {
 initializeDatabase();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173', // Your frontend URL from env
+  credentials: true // Allow cookies to be sent
+}));
 app.use(express.json());
 
 //server port
