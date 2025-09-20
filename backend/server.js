@@ -10,6 +10,9 @@ const app = express();
 // Connect to MongoDB
 connectDB();
 
+// serve images
+app.use('/static', express.static('images'));
+
 // Run seeders after DB connection
 const initializeDatabase = async () => {
   try {
@@ -35,6 +38,7 @@ const PORT = process.env.PORT || 3000;
 // Routes
 app.use('/api/admin', require('./routes/adminRoutes'));
 app.use('/api/products', require('./routes/productRoutes'));
+app.use('/api/images', require('./routes/imageRoutes'));
 
 
 // 404 handler

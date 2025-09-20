@@ -68,6 +68,7 @@ const generateToken = async (admin) => {
 
 
 
+
 const verifyOTP = async (req, res) => {
     const { email, otp } = req.body;
 
