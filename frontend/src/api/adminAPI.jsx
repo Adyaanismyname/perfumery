@@ -14,6 +14,26 @@ export const adminAuthAPI = {
   logout: () => api.post("/admin/logout"),
 };
 
+// Admin Product Management APIs
+export const adminProductAPI = {
+  getAllProducts: () => api.get("/admin/products"),
+  getProductById: (id) => api.get(`/admin/products/${id}`),
+  createProduct: (productData) => api.post("/admin/products", productData),
+  updateProduct: (id, productData) => api.put(`/admin/products/${id}`, productData),
+  deleteProduct: (id) => api.delete(`/admin/products/${id}`),
+  getAllCategories: () => api.get("/admin/categories"),
+};
+
+// Image Upload APIs
+export const imageAPI = {
+  uploadImage: (formData) => api.post("/images/upload", formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  }),
+  deleteImage: (filename) => api.delete(`/images/${filename}`),
+};
+
 export default api;
 
 

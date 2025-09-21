@@ -33,7 +33,31 @@ const getFeaturedProducts = async () => {
     }
 }
 
+const getProductById = async (productId) => {
+    try {
+        console.log('Making API call to:', `${API_BASE_URL}/products/${productId}`);
+        const res = await api.get(`/products/${productId}`);
+        console.log('API Response:', res.data);
+        return res.data;
+    } catch (error) {
+        console.error('API Error:', error);
+        throw error;
+    }
+}
 
-export { getAllProducts, getFeaturedProducts };
+const getProductsByCategory = async (categoryId) => {
+    try {
+        console.log('Making API call to:', `${API_BASE_URL}/products/category/${categoryId}`);
+        const res = await api.get(`/products/category/${categoryId}`);
+        console.log('API Response:', res.data);
+        return res.data;
+    } catch (error) {
+        console.error('API Error:', error);
+        throw error;
+    }
+}
+
+
+export { getAllProducts, getFeaturedProducts, getProductById, getProductsByCategory };
 export default getAllProducts;
 

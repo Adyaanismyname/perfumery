@@ -1,4 +1,3 @@
-const admin = require("../../models/admin")
 const Product = require("../models/product")
 
 

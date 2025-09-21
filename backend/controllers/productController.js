@@ -1,8 +1,8 @@
-const product = require("../models/product")
+const Product = require("../models/product")
 
 const getAllProducts = async (req, res) => {
     try {
-        const products = await product.find().select("_id title picture price category rating").populate("category");
+        const products = await Product.find().select("_id title picture price category rating").populate("category");
         res.json(products);
     }
     catch (error) {
@@ -12,7 +12,7 @@ const getAllProducts = async (req, res) => {
 
 const getFeaturedProducts = async (req, res) => {
     try {
-        const products = await product.find({ featured: true }).select("_id title picture price category rating").populate("category");
+        const products = await Product.find({ featured: true }).select("_id title picture price category rating").populate("category");
         res.json(products);
     }
     catch (error) {
@@ -20,10 +20,10 @@ const getFeaturedProducts = async (req, res) => {
     }
 };
 
-const getProductByCategory = async(req , res) => {
-    const {categoryId} = req.params;
+const getProductByCategory = async (req, res) => {
+    const { categoryId } = req.params;
     try {
-        const products = await product.find({ category: categoryId }).select("_id title picture price category rating").populate("category");
+        const products = await Product.find({ category: categoryId }).select("_id title picture price category rating").populate("category");
         res.json(products);
     }
     catch (error) {
@@ -31,16 +31,20 @@ const getProductByCategory = async(req , res) => {
     }
 }
 
-const getProductById = async(req , res) => {
-    const {productId} = req.params;
+const getProductById = async (req, res) => {
+    const { productId } = req.params;
     try {
-        const product = await product.findById(productId).select("_id title picture price category rating").populate("category");
-        res.json(product);
+        const foundProduct = await Product.findById(productId).populate("category");
+        if (!foundProduct) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+        res.json(foundProduct);
     }
     catch (error) {
         res.status(500).json({ message: 'Server Error' });
     }
 }
+
 
 module.exports = {
     getAllProducts,
