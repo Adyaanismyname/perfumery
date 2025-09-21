@@ -88,6 +88,7 @@ export const useCreateProduct = () => {
     });
 };
 
+
 // Update product
 export const useUpdateProduct = () => {
     const queryClient = useQueryClient();
